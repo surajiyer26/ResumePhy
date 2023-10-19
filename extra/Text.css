@@ -1,0 +1,7 @@
+.text {
+  position: relative;
+  font-size: var(--font-size-9xl);
+  font-family: var(--font-roboto);
+  color: var(--color-black);
+  text-align: left;
+}

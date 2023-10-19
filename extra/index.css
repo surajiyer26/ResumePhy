@@ -1,0 +1,7 @@
+.classification-routing {
+  position: relative;
+  font-size: var(--font-size-21xl);
+  font-family: var(--font-roboto);
+  color: var(--color-black);
+  text-align: left;
+}
