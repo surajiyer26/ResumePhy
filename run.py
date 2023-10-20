@@ -95,5 +95,36 @@ def contactus():
     return render_template('ContactUs.html')
 
 
+@app.route('/resumemaker')
+def resumemaker():
+    return render_template('ResumeMaker.html')
+
+
+@app.route('/generateresume', methods=['POST'])
+def generate_resume():
+    name = request.form['name']
+    email = request.form['email']
+    phone = request.form['phone']
+    summary = request.form['summary']
+    
+    titles = request.form.getlist('titles[]')
+    companies = request.form.getlist('companies[]')
+    start_dates = request.form.getlist('start_dates[]')
+    end_dates = request.form.getlist('end_dates[]')
+    descriptions = request.form.getlist('descriptions[]')
+    
+    experiences = []
+    for i in range(len(titles)):
+        experiences.append({
+            'title': titles[i],
+            'company': companies[i],
+            'start_date': start_dates[i],
+            'end_date': end_dates[i],
+            'description': descriptions[i],
+        })
+    
+    return render_template('GenerateResume.html', name=name, email=email, phone=phone, summary=summary, experiences=experiences)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
