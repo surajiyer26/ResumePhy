@@ -13,6 +13,7 @@
         <p>{{ form.password.label }}<br>{{ form.password() }}</p>
         <p>Remember me? {{ form.remember() }}</p>
         <p>{{ form.submit() }}</p>
+        <p><a href="{{ url_for('google') }}">Use Google to Log In instead</a></p>
     </form>
 </body>
 </html>
