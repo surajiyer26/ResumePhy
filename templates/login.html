@@ -11,6 +11,7 @@
         {{ form.hidden_tag() }}
         <p>{{ form.username.label }}<br>{{ form.username() }}</p>
         <p>{{ form.password.label }}<br>{{ form.password() }}</p>
+        <p>Remember me? {{ form.remember() }}</p>
         <p>{{ form.submit() }}</p>
     </form>
 </body>

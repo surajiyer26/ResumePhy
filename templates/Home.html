@@ -32,6 +32,15 @@
     />
   </head>
   <body>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     <div class="resumephy">
       <div class="span11"></div>
       <div class="span12"></div>
@@ -47,9 +56,15 @@
 
           <div class="rectangle-parent">
             <div class="group-child"></div>
-            <b class="login2"><a style="color: White; text-decoration: None;" href="{{ url_for('login') }}">Log In</a></b>
-            <div class="group-item"></div>
-            <b class="sign-up3"><a style="color: White; text-decoration: None;" href="{{ url_for('signup') }}">Sign Up</a></b>
+            {% if current_user.is_authenticated %}
+              <b class="login2"><a style="color: White; text-decoration: None;" href="{{ url_for('logout') }}">Log Out</a></b>
+              <div class="group-item"></div>
+              <b class="sign-up3"><a style="color: White; text-decoration: None;" href="{{ url_for('donate') }}">Donate</a></b>
+            {% else %}
+              <b class="login2"><a style="color: White; text-decoration: None;" href="{{ url_for('login') }}">Log In</a></b>
+              <div class="group-item"></div>
+              <b class="sign-up3"><a style="color: White; text-decoration: None;" href="{{ url_for('signup') }}">Sign Up</a></b>
+            {% endif %}
           </div>
           <div class="things-to-do">
             <div class="checkbox">

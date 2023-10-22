@@ -1,15 +1,28 @@
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_sqlalchemy import SQLAlchemy
 from forms import RegistrationForm, LoginForm
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
+from flask_login import login_user, current_user, logout_user, login_required
+from flask_login import UserMixin
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'CMfgkELMQ4e7FG8nS+GVC7Lr9174et8jR0bJcBeuKVtm7JseaG1QWy0NIsofOo/v'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
 
 
-class User(db.Model):
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
@@ -63,31 +76,50 @@ def aboutus():
 
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = RegistrationForm()
-
     if form.validate_on_submit():
-        user = User(username=form.username.data, password=form.password.data)
+        user = User.query.filter_by(username=form.username.data).first()
+        if user:
+            flash('That username is taken. Please choose a different one.')
+            return redirect(url_for('signup'))
+
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
-        flash('Your account has been created! You are now able to log in.', 'success')
+        flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('login'))
-
     return render_template('signup.html', form=form)
+
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = LoginForm()
-
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-
-        if user and user.password == form.password.data:
-            flash('Login successful!', 'success')
-            return redirect(url_for('home'))
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get('next')
+            flash(f'Login Successful. Welcome, { form.username.data }')
+            return redirect(next_page) if next_page else redirect(url_for('home'))
         else:
-            flash('Login unsuccessful. Please check your username and password.', 'danger')
-
+            flash('Login Unsuccessful. Please check email and password')
     return render_template('login.html', form=form)
+
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+
+@app.route("/donate")
+def donate():
+    return ('to be implemented')
 
 
 @app.route("/contactus")
@@ -106,13 +138,13 @@ def generate_resume():
     email = request.form['email']
     phone = request.form['phone']
     summary = request.form['summary']
-    
+
     titles = request.form.getlist('titles[]')
     companies = request.form.getlist('companies[]')
     start_dates = request.form.getlist('start_dates[]')
     end_dates = request.form.getlist('end_dates[]')
     descriptions = request.form.getlist('descriptions[]')
-    
+
     experiences = []
     for i in range(len(titles)):
         experiences.append({
@@ -122,7 +154,7 @@ def generate_resume():
             'end_date': end_dates[i],
             'description': descriptions[i],
         })
-    
+
     return render_template('GenerateResume.html', name=name, email=email, phone=phone, summary=summary, experiences=experiences)
 
 
