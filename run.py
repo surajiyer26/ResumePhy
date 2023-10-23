@@ -1,11 +1,18 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, session
+from flask import Flask, render_template, redirect, url_for, flash, request, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from forms import RegistrationForm, LoginForm
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_login import UserMixin
-from authlib.integrations.flask_client import OAuth
+import stripe
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+stripe_public_key = os.getenv("STRIPE_PUBLIC_KEY")
+stripe_secret_key = os.getenv("STRIPE_SECRET_KEY")
 
 
 app = Flask(__name__)
@@ -16,17 +23,6 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
-app.config.from_object('config')
-
-CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
-oauth = OAuth(app)
-oauth.register(
-    name='google',
-    server_metadata_url=CONF_URL,
-    client_kwargs={
-        'scope': 'openid email profile'
-    }
-)
 
 
 @login_manager.user_loader
@@ -123,19 +119,6 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route("/google")
-def google():
-    redirect_uri = url_for('auth', _external=True)
-    return oauth.google.authorize_redirect(redirect_uri)
-
-
-@app.route('/auth')
-def auth():
-    token = oauth.google.authorize_access_token()
-    session['user'] = token['userinfo']
-    return redirect('/home')
-
-
 @app.route("/logout")
 def logout():
     logout_user()
@@ -145,7 +128,18 @@ def logout():
 
 @app.route("/donate")
 def donate():
-    return ('to be implemented')
+    return render_template('donate.html')
+
+
+@app.route('/charge', methods=['POST'])
+def charge():
+    try:
+       	flash("Payment Successful, Thanks For The Support!")
+        return render_template('home.html')
+    except stripe.error.CardError as e:
+        # The card has been declined
+        flash("Payment Unsuccessful, Card Was Declined!")
+        return render_template('home.html')
 
 
 @app.route("/contactus")

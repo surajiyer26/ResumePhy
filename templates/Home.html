@@ -56,7 +56,7 @@
 
           <div class="rectangle-parent">
             <div class="group-child"></div>
-            {% if current_user.is_authenticated or session['profile'] %}
+            {% if current_user.is_authenticated %}
               <b class="login2"><a style="color: White; text-decoration: None;" href="{{ url_for('logout') }}">Log Out</a></b>
               <div class="group-item"></div>
               <b class="sign-up3"><a style="color: White; text-decoration: None;" href="{{ url_for('donate') }}">Donate</a></b>
