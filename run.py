@@ -135,7 +135,7 @@ def donate():
 def charge():
     try:
        	flash("Payment Successful, Thanks For The Support!")
-        return render_template('home.html')
+        return redirect(url_for('home'))
     except stripe.error.CardError as e:
         # The card has been declined
         flash("Payment Unsuccessful, Card Was Declined!")
