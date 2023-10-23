@@ -122,7 +122,7 @@ def login():
 @app.route("/logout")
 def logout():
     logout_user()
-    session.pop("user", None)
+    flash("You have successfuly logged out!")
     return redirect(url_for('home'))
 
 
