@@ -7,10 +7,6 @@
     <title>Resume Parser</title>
 </head>
 <style>
-    body{
-        font-family: 'Lucida Grande', monospace;
-        font-size: 15px;
-    }
     body {
         background-color: #f4f7fc;
         font-family: Arial, sans-serif;
@@ -30,13 +26,24 @@
         text-align: center; /* Center align paragraphs */
     }
 
-    a {
-        color: #007BFF;
+    nav {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+    nav a {
         text-decoration: none;
+        color: #3498db;
+        padding: 10px 20px;
+        margin: 0 10px;
+        border-radius: 5px;
+        background-color: #fff;
+        transition: background-color 0.3s ease;
     }
 
-    a:hover {
-        text-decoration: underline;
+    nav a:hover {
+        background-color: #3498db;
+        color: #fff;
     }
 
     /* Form styling */
@@ -83,7 +90,9 @@
 </style>
 <body>
     <h1>Resume Parser</h1>
-    <a href="{{url_for('review')}}" >Review submissions</a>
+    <nav>
+        <a href="{{url_for('review')}}" >Review submissions</a>
+    </nav>
     <p>---------------------------------------------------------------</p>
 
     <h2>Step 1: Enter Keywords</h2>
