@@ -35,34 +35,33 @@
 .platform4,
 .products3 {
   position: absolute;
-  top: 28px;
-  left: 467px;
+  top: 24px;
+  left: 154px;
 }
 .about-us3,
 .products3 {
-  left: 154px;
+  left: 285px;
 }
 .about-us3 {
-  top: 31px;
-  left: 595px;
+  top: 24px;
+  left: 406px;
 }
 .home3,
 .navbar-02-inner {
   position: absolute;
-  top: 27px;
+  top: 24px;
   left: 47px;
 }
 .navbar-02-inner {
-  top: 49px;
-  left: 470px;
-  width: 63.5px;
-  height: 3px;
+  position: absolute;
+  top: 50px;
+  left: 154px;
 }
 .navbar-023,
 .privacy-policy3 {
   position: absolute;
-  top: 28px;
-  left: 285px;
+  top: 24px;
+  left: 528px;
 }
 .navbar-023 {
   top: 20px;
